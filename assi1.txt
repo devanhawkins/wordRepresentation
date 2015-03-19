@@ -1,0 +1,69 @@
+Devan Hawkins
+998882641
+				Assignment #1
+Part 1
+1) 
+The total number of trainable parameters is the sum of:
+input-to-embedding-layer weights,
+embedding-to-hidden-layer weigths,
+hidden layer biases,
+hidden-to-output-layer weights, and
+output layer biases
+= (250 * 16) + (16 * 128) + 128 + (128 * 250) + 250
+= 38, 426
+Therefore, there are 38, 426 trainable parameters.
+
+From this data, we can see that the output-to-hidden layer part of the model has the most trainable parameters with 250 * 128 = 32 000 of them.
+
+2)
+If we were to store the counts all possible 4-grams explicitily, we would have a table with 3,890,625,000 entries. This number is all of the three-word possibilities in the vocabulary (250 * 250 * 250) times all the words in the vocabulary except for a single word in the given column (250 - 1). This makes it 250^3 * 249 = 3,890,625,000.
+
+Part 2
+Model.compute_loss_derivative:
+dcdy = output_activations - expanded_target_batch
+return dcdy
+
+Model.back_propagate:
+hid_to_output_weights_grad = np.dot(loss_derivative.T, activations.hidden_layer) 
+output_bias_grad = np.sum(loss_derivative, axis=0)
+embed_to_hid_weights_grad = np.dot(hid_deriv.T, activations.embedding_layer)
+hid_bias_grad = np.sum(hid_deriv, axis=0)
+
+"checking.print_gradients()" Output:
+loss_derivative[2, 5] 0.0013789153741
+loss_derivative[2, 121] -0.999459885968
+loss_derivative[5, 33] 0.000391942483563
+loss_derivative[5, 31] -0.708749715825
+
+param_gradient.word_embedding_weights[27, 2] -0.298510438589
+param_gradient.word_embedding_weights[43, 3] -1.13004162742
+param_gradient.word_embedding_weights[22, 4] -0.211118814492
+param_gradient.word_embedding_weights[2, 5] 0.0
+
+param_gradient.embed_to_hid_weights[10, 2] -0.0128399532941
+param_gradient.embed_to_hid_weights[15, 3] 0.0937808780803
+param_gradient.embed_to_hid_weights[30, 9] -0.16837240452
+param_gradient.embed_to_hid_weights[35, 21] 0.0619595914046
+
+param_gradient.hid_bias[10] -0.125907091215
+param_gradient.hid_bias[20] -0.389817847348
+
+param_gradient.output_bias[0] -2.23233392034
+param_gradient.output_bias[1] 0.0333102255428
+param_gradient.output_bias[2] -0.743090094025
+param_gradient.output_bias[3] 0.162372657748
+None
+
+Part 3
+1)
+Using the words "dr. john said", which had no occurrences in the raw texts, I got sentenses like "dr. john said." (with a period) and "dr. john said no", which are plausible sentenses. Of course, there were non-plausible suggestions like "dr. john said much" and many punctuation suggestions like "dr. john said ,". Therefore, I would say that the program learned moderately well, given plausible sentenses about 20-30% of the time.
+
+2)
+In the plot, there are many sensible clusters of words. Near the top, we have question words and punctuation. Left of the center, there are many adjectives and possesion words (my, our, your) more left than that. Time-related words like today, month, minute or years were all group near the center-top area. Core verbs like being ('is', 'has', 'was') and doing ('did', does', 'do') were and the bottom, along with words like 'would' or 'could'. The center of the graph (perhaps a bit to the right) had most of the nouns that ranged anywhere from 'children' to 'government'. Subjects ('I', 'we', he') were clustered on the far right of the plot. All in all, these word clustered all have linguistical meaning behind them. They all follow English syntax rules, such as subject, verbs and objects, all in distinct groups. All distinguishable clusters have this commonality.   
+ 
+3)
+The words 'new' and 'york' are not close together in the learned representation (they have a distance of about 4.37). This is because the word 'new' is more likely to be used as an adjective preceding other nouns than it is likely to be used as a proper noun in the name 'New York'. Since, linguistically speaking, these are very diffrent from each other, 'New' and 'york' were separated from one another. 
+
+4)
+The words 'government' and 'university' has closer together in the learned representation (approximately 1.28, rather than approximately 1.80 in 'government' and 'political'). I believe that this is because the word 'political' is an adjective, whereras 'government' and 'university' are both nouns and the neural network groups words together based on English syntax. Therefore, I believe that noun words like 'university' and 'government' should be closer together because of their linguistical meaning.  
+
